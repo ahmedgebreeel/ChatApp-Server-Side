@@ -3,6 +3,8 @@ const cors = require("cors");
 const dotenv = require("dotenv")
 const { connect } = require("./db");
 const userRouter = require("./Routes/userRoute.js")
+const chatRouter = require("./Routes/chatRoute.js")
+
 const cookieParser = require('cookie-parser')
 
 const app = express()
@@ -10,10 +12,12 @@ const app = express()
 
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use(cors());
 app.use("/user", userRouter)
+app.use("/chat", chatRouter)
+
 app.all("*", (req, res, next) => {
   const err = new Error(`cant find this route ${req.originalUrl}`)
   next(err.message)
