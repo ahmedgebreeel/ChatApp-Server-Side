@@ -1,5 +1,8 @@
 const User = require("../Models/userModel");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const asyncHandler = require('express-async-handler');
+const ApiError = require('../utils/appError');
+
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET,
@@ -31,43 +34,43 @@ const createSendToken = (user, statusCode, res) => {
 
 
 
-const singup = async (req, res) => {
-  try {
-    let { name, email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ error: "user Aleardy Exists!" })
-    }
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "All field are required ...." })
-    }
-    const newUser = new User({ name, email, password });
-    const savedNewUser = await newUser.save();
-    signToken(savedNewUser._id)
-    createSendToken(savedNewUser, 201, res)
-  }
-  catch (error) {
-    res.status(400).json({ error: error.message })
-  }
-}
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-    const user = await User.findOne({ email }).select('+password');
+const singup = asyncHandler(async (req, res) => {
 
-    if (!user || !(await user.correctPass(password, user.password))) {
-      return res.status(401).json({ error: "Email or password is not correct" });
-    }
-    createSendToken(user, 200, res)
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+  });
+  createSendToken(newUser, 201, res)
+
+})
+
+const login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user || !(await user.correctPass(password, user.password))) {
+    return next(new ApiError("Email or password is not correct", 401));
   }
-  catch (error) {
-    res.status(401).json({ error: error.message })
+  createSendToken(user, 200, res)
+
+})
+
+const getusers = asyncHandler(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json(users);
+
+});
+const getUserByID = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const SpasificUSer = await User.findById(userId);
+  if (!SpasificUSer) {
+    return next(new ApiError('No user found with that ID', 404));
   }
-}
+  res.status(200).json(SpasificUSer);
+});
 
 
-module.exports = { singup, login };
+module.exports = { singup, login, getusers, getUserByID };
