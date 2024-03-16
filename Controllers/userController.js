@@ -1,8 +1,9 @@
 const User = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler');
-const ApiError = require('../utils/appError');
+const AppError = require("../utils/appError");
 
+//#region for crteate token
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET,
@@ -11,6 +12,9 @@ const signToken = id => {
     }
   );
 };
+// #endregion
+
+//#region for send cookie
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -31,11 +35,16 @@ const createSendToken = (user, statusCode, res) => {
     }
   });
 };
+// #endregion
 
 
 
-
-const singup = asyncHandler(async (req, res) => {
+//#region for signup
+const singup = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email })
+  if (user) {
+    return next(new AppError("this user already exists", 400))
+  }
 
   const newUser = await User.create({
     name: req.body.name,
@@ -45,6 +54,10 @@ const singup = asyncHandler(async (req, res) => {
   createSendToken(newUser, 201, res)
 
 })
+// #endregion
+
+//#region for login
+
 
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -52,25 +65,31 @@ const login = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.correctPass(password, user.password))) {
-    return next(new ApiError("Email or password is not correct", 401));
+    return next(new AppError("Email or password is not correct", 401));
   }
   createSendToken(user, 200, res)
 
 })
+// #endregion
 
+
+//#region for getAllUser
 const getusers = asyncHandler(async (req, res, next) => {
   const users = await User.find();
   res.status(200).json(users);
 
 });
-const getUserByID = asyncHandler(async (req, res) => {
+// #endregion
+//#region for getuserById
+
+const getUserByID = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   const SpasificUSer = await User.findById(userId);
   if (!SpasificUSer) {
-    return next(new ApiError('No user found with that ID', 404));
+    return next(new AppError('No user found with that ID', 404));
   }
   res.status(200).json(SpasificUSer);
 });
-
+// #endregion
 
 module.exports = { singup, login, getusers, getUserByID };

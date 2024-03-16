@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
+//#region for user chat
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -27,8 +28,10 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true
 })
+// #endregion
 
 
+//#region for validate
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
@@ -37,5 +40,7 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.correctPass = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+// #endregion
+
 const User = mongoose.model('User', userSchema);
 module.exports = User;
