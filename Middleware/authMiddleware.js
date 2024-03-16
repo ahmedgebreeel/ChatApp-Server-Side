@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/userModel");
 const asyncHandler = require("express-async-handler");
 
+//#region for authMiddleware check the user is login
 const protect = asyncHandler(async (req, res, next) => {
   let token;
   token = req.cookies.jwt;
@@ -25,17 +26,15 @@ const protect = asyncHandler(async (req, res, next) => {
   if (!decoded) {
     return next(new ApiError('token is not true', 401))
   }
-  //     res.status(401);
-  //     throw new Error("Not authorized, token failed");
-  //   }
-  // }
+
   console.log("line" + decoded.id);
 
   if (!token) {
     return next(new ApiError("Not authorized, no token", 401));
   }
   next();
-
 });
+// #endregion
+
 // console.log(protect);
 module.exports = { protect };
