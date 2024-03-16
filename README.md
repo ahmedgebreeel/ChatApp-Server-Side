@@ -1,4 +1,4 @@
-Features
+#Features
 
 user can login if he has an acccount
 
@@ -14,8 +14,12 @@ make a chat group
 
 add user to chatgroup
 
+send message
 
-Install dependencies:
+get Allmessages in chat
+
+
+#Install dependencies:
 
 npm i cookie-parser
 npm i mongoose bcryptjs validator dotenv cors jsonwebtoken express-async-handler
@@ -25,7 +29,7 @@ Start the server:
 node index.js
 
 
-API Endpoints
+#API Endpoints
 
 POST  http://localhost:8000/user/signup: Register a new user. {email,password,name}
 
@@ -43,6 +47,9 @@ POST  http://localhost:8000/chat/group: create a createGroupChat .{name,users:[]
 
 POST  http://localhost:8000/chat/groupadd: add another user to the groupchat{userId}
 
+POST http://localhost:8000/message :send new message.{content,chatId}
+
+GET http://localhost:8000/message/chatId :get all message in this chat
 
 
 
