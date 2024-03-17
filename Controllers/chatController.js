@@ -1,14 +1,13 @@
-const User = require("../Models/userModel");
-const Chat = require("../Models/chatModel");
+const User = require("../models/userModel");
+const Chat = require("../models/chatModel");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler');
 const AppError = require('../utils/appError');
+const Message = require("../models/messageModel");
 
 
 //#region for crteate chat
 const accessChat = asyncHandler(async (req, res, next) => {
-  const user = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET).id
-  console.log(user);
   const { userId } = req.body;
   console.log(userId);
   if (!userId) {
@@ -17,26 +16,26 @@ const accessChat = asyncHandler(async (req, res, next) => {
   //#region for find if this chat aleary exist don't create a new one
 
   const ischat = await Chat.find({
-    isGroupChat: false, $and: [
-      { users: { $elemMatch: { $eq: user } } },
+    $and: [
+      { users: { $elemMatch: { $eq: req.user._id } } },
       { users: { $elemMatch: { $eq: userId } } },
     ],
   }).populate("latestMessage");
 
-  console.log(ischat);
-
+  // console.log(ischat);
   if (ischat.length > 0) {
-    return res.send(ischat[0]);
+    const message = await Message.find({ chat: ischat[0]._id })
+    // console.log(message[0]);
+    return res.send(message);
   }
   // #endregion
   else {
     const createdChat = await Chat.create({
       chatName: "sender",
-      isGroupChat: false,
-      users: [user, userId]
+      users: [req.user._id, userId]
     });
     const FullChat = await Chat.findOne({ _id: createdChat._id })
-    res.status(201).json(FullChat);
+    res.status(201).json(FullChat._id);
 
 
   }
@@ -46,10 +45,7 @@ const accessChat = asyncHandler(async (req, res, next) => {
 //#region for get chat
 
 const getChats = asyncHandler(async (req, res, next) => {
-  const user = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET).id
-  console.log(user);
-  const results = await Chat.find({ users: { $elemMatch: { $eq: user } } }).sort("-updatedAt").populate("latestMessage")
-
+  const results = await Chat.find({ users: { $elemMatch: { $eq: req.user._id } } }).sort("-updatedAt").populate("latestMessage")
   res.status(200).json(results);
 })
 // #endregion
@@ -62,34 +58,34 @@ const createGroupChat = asyncHandler(async (req, res, next) => {
   if (!req.body.users || !req.body.name) {
     return next(new AppError("Please Fill all the feilds", 400));
   }
-  console.log("length" + users.length);
   if (users.length < 2) {
     return next(new AppError("More than 2 users are required to form a group chat", 400));
   }
-  const user = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET).id
+  const user = req.user._id
   users.push(user);
   //#region for find if this chat aleary exist don't create a new one
 
   const ischat = await Chat.find({
-    isGroupChat: true,
     $and: [
       { users: { $eq: users } },
     ],
   })
-
+  // console.log(ischat[0]);
   if (ischat.length > 0) {
-    return res.send(ischat[0]);
+    const message = await Message.find({ chat: ischat[0]._id })
+    // console.log(message[0]);
+    return res.send(message);
   }
   // #endregion
   else {
     const groupChat = await Chat.create({
       chatName: req.body.name,
       users: users,
-      isGroupChat: true,
       groupAdmin: user,
     });
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
-    res.status(201).json(fullGroupChat);
+    // console.log(fullGroupChat);
+    res.status(201).json(fullGroupChat._id);
 
   }
 })

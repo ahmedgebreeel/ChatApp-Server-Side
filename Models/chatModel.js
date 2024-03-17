@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-
 //#region for chat schema
 const chatSchema = mongoose.Schema(
   {
     chatName: { type: String, trim: true },
-    isGroupChat: { type: Boolean, default: false },
+    // isGroupChat: { type: Boolean, default: false },
     users: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     latestMessage: {
       type: mongoose.Schema.ObjectId,

@@ -1,12 +1,12 @@
-const { sendMessage, getMessages } = require("../Controllers/messageController");
-const { protect } = require("../Middleware/authMiddleware");
+const { sendMessage } = require("../controllers/messageController");
+const { protect } = require("../middlewares/authMiddleware");
 
 const router = require("express").Router();
 
 
 
 router.route("/").post(protect, sendMessage)
-router.route("/:chatId").get(protect, getMessages)
+// router.route("/:chatId").get(protect, getMessages)
 
 
 

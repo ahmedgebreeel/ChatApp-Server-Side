@@ -1,4 +1,4 @@
-const User = require("../Models/userModel");
+const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler');
 const AppError = require("../utils/appError");
@@ -14,31 +14,6 @@ const signToken = id => {
 };
 // #endregion
 
-//#region for send cookie
-
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    // secure:true,
-    httpOnly: true
-  };
-  res.cookie('jwt', token, cookieOptions);
-
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user
-    }
-  });
-};
-// #endregion
-
-
-
 //#region for signup
 const singup = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email })
@@ -51,8 +26,14 @@ const singup = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-  createSendToken(newUser, 201, res)
+  const token = signToken(newUser._id);
 
+  res.status(201).header("Authorization", `Bearer ${token}`).json({
+    success: true,
+    message: "Sign up successful",
+    token,
+    userName: newUser.name
+  });
 })
 // #endregion
 
@@ -67,8 +48,9 @@ const login = asyncHandler(async (req, res, next) => {
   if (!user || !(await user.correctPass(password, user.password))) {
     return next(new AppError("Email or password is not correct", 401));
   }
-  createSendToken(user, 200, res)
-
+  const token = signToken(user.id);
+  res.header("Authorization", `Bearer ${token}`);
+  res.status(200).json({ success: true, message: "Login successful", token, userName: user.name });
 })
 // #endregion
 
@@ -77,11 +59,9 @@ const login = asyncHandler(async (req, res, next) => {
 const getusers = asyncHandler(async (req, res, next) => {
   const users = await User.find();
   res.status(200).json(users);
-
 });
 // #endregion
 //#region for getuserById
-
 const getUserByID = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   const SpasificUSer = await User.findById(userId);

@@ -14,9 +14,10 @@ const messageSchema = mongoose.Schema(
 
 //#region for population
 messageSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'chat',
-  });
+  // this.populate({
+  //   path: 'chat',
+
+  // });
   this.populate({
     path: 'sender'
     , select: 'name'
