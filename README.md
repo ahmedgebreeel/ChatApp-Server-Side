@@ -1,35 +1,25 @@
-#Features
+# Features
 
-user can login if he has an acccount
+- user can login if he has an acccount
+- and singup if he not has an account
+- display all users
+- create chat one user
+- getchat 
+- make a chat group
+- add user to chatgroup
+- send message
+- get Allmessages in chat
 
-and singup if he not has an account
+## Install dependencies:
 
-display all users
+npm i cookie-parser mongoose bcryptjs validator dotenv cors jsonwebtoken express-async-handler
 
-create chat one user
-
-getchat 
-
-make a chat group
-
-add user to chatgroup
-
-send message
-
-get Allmessages in chat
-
-
-#Install dependencies:
-
-npm i cookie-parser
-npm i mongoose bcryptjs validator dotenv cors jsonwebtoken express-async-handler
-
-Start the server:
+### Start the server:
 
 node index.js
 
 
-#API Endpoints
+## API Endpoints
 
 POST  http://localhost:8000/user/signup: Register a new user. {email,password,name}
 
