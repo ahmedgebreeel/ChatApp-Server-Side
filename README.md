@@ -29,6 +29,7 @@ Get http://localhost:8000/user :show all users
 
 POST  http://localhost:8000/chat: getting messages between me and userId {userId}
 
+POST http://localhost:8000/message :send new message.{content,chatId}
 
 **********************************
 
@@ -40,7 +41,6 @@ POST  http://localhost:8000/chat/group: create a createGroupChat .{name,users:[]
 
 POST  http://localhost:8000/chat/groupadd: add another user to the groupchat{userId}
 
-POST http://localhost:8000/message :send new message.{content,chatId}
 
 GET http://localhost:8000/message/chatId :get all message in this chat
 
