@@ -27,9 +27,12 @@ POST  http://localhost:8000/user/login: Login and receive an authentication toke
 
 Get http://localhost:8000/user :show all users
 
-Get http://localhost:8000/use/:id :show one user
+POST  http://localhost:8000/chat: getting messages between me and userId {userId}
 
-POST  http://localhost:8000/chat: create a chat with user .{userId}
+
+**********************************
+
+Get http://localhost:8000/use/:id :show one user
 
 Get http://localhost:8000/chat :show chat
 
