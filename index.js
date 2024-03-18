@@ -3,9 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv")
 const { connect } = require("./db");
-const userRouter = require("./Routes/userRoute.js")
-const chatRouter = require("./Routes/chatRoute.js")
-const messageRouter = require("./Routes/messageRouter.js")
+const userRouter = require("./routes/userRoute.js")
+const chatRouter = require("./routes/chatRoute.js")
+const messageRouter = require("./routes/messageRouter.js")
 const cookieParser = require('cookie-parser');
 const AppError = require("./utils/appError.js");
 // #endregion

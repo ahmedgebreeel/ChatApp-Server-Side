@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { accessChat, getChats, createGroupChat, addToGroup } = require("../Controllers/chatController");
+const { accessChat, getChats, createGroupChat, addToGroup } = require("../controllers/chatController");
 const { protect } = require("../middlewares/authMiddleware");
 
 router.route("/").post(protect, accessChat).get(protect, getChats)

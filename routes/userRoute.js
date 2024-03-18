@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { singup, login, getusers, getUserByID } = require("../Controllers/userController")
+const { singup, login, getusers, getUserByID } = require("../controllers/userController")
 
 router.route("/signup").post(singup)
 router.route("/login").post(login)
