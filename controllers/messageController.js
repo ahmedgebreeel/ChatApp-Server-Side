@@ -20,7 +20,6 @@ const getMessages = asyncHandler(async (req, res, next) => {
   const { chatId } = req.params
   const message = await Message.find({ chat: chatId })
   res.status(200).json(message)
-
 })
 
 module.exports = { sendMessage, getMessages };
