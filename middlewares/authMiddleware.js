@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
-const AppError = require("../utils/appError");
 const { promisify } = require("util");
+const BaseError = require("../errors/BaseError");
+const NotAuthError = require("../errors/NotAuthError");
 
 const protect = asyncHandler(async (req, res, next) => {
   let token
@@ -14,11 +15,11 @@ const protect = asyncHandler(async (req, res, next) => {
     var decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     if (!decoded) {
-      return next(new AppError('token is not true', 401))
+      return next(new NotAuthError('token is not true'))
     }
   }
   if (!token) {
-    return next(new AppError("Not authorized, no token", 401));
+    return next(new NotAuthError("Not authorized, no token"));
   }
   const stillUser = await User.findById(decoded.id);
   req.user = stillUser

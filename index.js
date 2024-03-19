@@ -4,8 +4,12 @@ const { connect } = require("./db");
 const userRouter = require("./routes/userRoute.js")
 const chatRouter = require("./routes/chatRoute.js")
 const messageRouter = require("./routes/messageRouter.js")
+// const globalErrorHandler = require('./controllers/errorController');
 const cookieParser = require('cookie-parser');
 const AppError = require("./utils/appError.js");
+const { globalError } = require("./middlewares/errorMiddleware.js");
+const BaseError = require("./errors/BaseError.js");
+const NotFound = require("./errors/NotFound.js");
 
 const app = express()
 
@@ -22,15 +26,10 @@ app.get("/", (req, res) => {
 })
 
 app.all("*", (req, res, next) => {
-  next(new AppError(`cant find this route ${req.originalUrl}`, 404))
+  next(new NotFound(`cant find this route ${req.originalUrl}`))
 })
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message
-  })
-})
+
+app.use(globalError);
 
 const port = process.env.PORT || 5000
 connect()

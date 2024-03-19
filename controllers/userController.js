@@ -1,7 +1,11 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler');
-const AppError = require("../utils/appError");
+// const globalError = require("../utils/globalError");
+const globalError = require("../middlewares/errorMiddleware");
+const NotFound = require("../errors/NotFound");
+const BaseError = require("../errors/BaseError");
+const BadReqError = require("../errors/BadReqError");
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET,
@@ -14,7 +18,7 @@ const signToken = id => {
 const singup = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email })
   if (user) {
-    return next(new AppError("this user already exists", 400))
+    return next(new BadReqError("this user already exists"))
   }
   const newUser = await User.create({
     name: req.body.name,
@@ -34,7 +38,7 @@ const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.correctPass(password, user.password))) {
-    return next(new AppError("Email or password is not correct", 401));
+    return next(new BaseError("Email or password is not correct", 401));
   }
   const token = signToken(user.id);
   res.header("Authorization", `Bearer ${token}`);
@@ -50,7 +54,7 @@ const getUserByID = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   const SpasificUSer = await User.findById(userId);
   if (!SpasificUSer) {
-    return next(new AppError('No user found with that ID', 404));
+    return next(new NotFound('No user found with that ID'));
   }
   res.status(200).json(SpasificUSer);
 });

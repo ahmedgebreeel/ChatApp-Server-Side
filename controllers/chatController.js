@@ -1,13 +1,14 @@
 const User = require("../models/userModel");
 const Chat = require("../models/chatModel");
 const asyncHandler = require('express-async-handler');
-const AppError = require('../utils/appError');
 const Message = require("../models/messageModel");
+const NotFound = require("../errors/NotFound");
+const BadReqError = require("../errors/BadReqError");
 
 const accessChat = asyncHandler(async (req, res, next) => {
   const { userId } = req.body;
   if (!userId) {
-    return next(new AppError(`UserId not send`, 400));
+    return next(new BadReqError(`UserId not send`));
   }
   // find if this chat aleary exist don't create a new one
   const ischat = await Chat.find({
@@ -38,10 +39,10 @@ const getChats = asyncHandler(async (req, res, next) => {
 const createGroupChat = asyncHandler(async (req, res, next) => {
   var { users } = req.body
   if (!req.body.users || !req.body.name) {
-    return next(new AppError("Please Fill all the feilds", 400));
+    return next(new BadReqError("Please Fill all the feilds"));
   }
   if (users.length < 2) {
-    return next(new AppError("More than 2 users are required to form a group chat", 400));
+    return next(new BadReqError("More than 2 users are required to form a group chat"));
   }
   const user = req.user._id
   users.push(user);
@@ -79,7 +80,7 @@ const addToGroup = asyncHandler(async (req, res, next) => {
       new: true,
     })
   if (!added) {
-    return next(new AppError("Chat Not Found", 404));
+    return next(new NotFound("Chat Not Found"));
   }
   res.status(200).json(added);
 });
