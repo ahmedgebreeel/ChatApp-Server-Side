@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const AppError = require('../utils/appError');
 const Message = require('../models/messageModel');
 const Chat = require('../models/chatModel');
 const BadReqError = require("../errors/BadReqError")

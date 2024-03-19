@@ -6,6 +6,7 @@ const globalError = require("../middlewares/errorMiddleware");
 const NotFound = require("../errors/NotFound");
 const BaseError = require("../errors/BaseError");
 const BadReqError = require("../errors/BadReqError");
+const APIFeatures = require("../utlis/ApiFeature");
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET,
@@ -45,8 +46,9 @@ const login = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, message: "Login successful", token, userName: user.name });
 })
 
-const getusers = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
+const getAllUser = asyncHandler(async (req, res, next) => {
+  const features = new APIFeatures(User.find(), req.query).search()
+  const users = await features.query;
   res.status(200).json(users);
 });
 
@@ -59,4 +61,4 @@ const getUserByID = asyncHandler(async (req, res, next) => {
   res.status(200).json(SpasificUSer);
 });
 
-module.exports = { singup, login, getusers, getUserByID };
+module.exports = { singup, login, getAllUser, getUserByID };
