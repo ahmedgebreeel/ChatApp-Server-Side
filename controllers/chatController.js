@@ -40,8 +40,8 @@ const createGroupChat = asyncHandler(async (req, res, next) => {
   var { users } = req.body
   if (!req.body.users || !req.body.name) {
     return next(new BadReqError("Please Fill all the feilds"));
-  }
-  if (users.length < 2) {
+  } if (users.length < 2) {
+
     return next(new BadReqError("More than 2 users are required to form a group chat"));
   }
   const user = req.user._id
@@ -85,4 +85,19 @@ const addToGroup = asyncHandler(async (req, res, next) => {
   res.status(200).json(added);
 });
 
-module.exports = { accessChat, getChats, createGroupChat, addToGroup };
+
+const getGroupChat = asyncHandler(async (req, res, next) => {
+
+  const results = await Chat.aggregate([
+    {
+      $match: {
+        $and: [
+          { $expr: { $gt: [{ $size: "$users" }, 2] } },
+          { users: { $elemMatch: { $eq: req.user._id } } }]
+      }
+    }
+  ])
+  res.status(200).json(results);
+})
+
+module.exports = { accessChat, getChats, createGroupChat, addToGroup, getGroupChat };
