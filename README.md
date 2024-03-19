@@ -9,7 +9,7 @@
 - add user to chatgroup
 - send message
 - get Allmessages in chat
-
+-get all groupChat
 ## Install dependencies:
 
 npm i cookie-parser mongoose bcryptjs validator dotenv cors jsonwebtoken express-async-handler
@@ -32,6 +32,7 @@ POST  http://localhost:8000/chat: getting messages between me and userId {userId
 POST http://localhost:8000/message :send new message.{content,chatId}
 
 **********************************
+Get  http://localhost:8000/chat/group:show all Group Chat
 
 Get http://localhost:8000/use/:id :show one user
 
