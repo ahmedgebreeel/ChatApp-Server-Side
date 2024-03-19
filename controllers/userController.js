@@ -47,7 +47,7 @@ const login = asyncHandler(async (req, res, next) => {
 })
 
 const getAllUser = asyncHandler(async (req, res, next) => {
-  const features = new APIFeatures(User.find(), req.query).search()
+  const features = new APIFeatures(User.find({ _id: { $ne: req.user._id } }), req.query).search()
   const users = await features.query;
   res.status(200).json(users);
 });
