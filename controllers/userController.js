@@ -6,7 +6,7 @@ const globalError = require("../middlewares/errorMiddleware");
 const NotFound = require("../errors/NotFound");
 const BaseError = require("../errors/BaseError");
 const BadReqError = require("../errors/BadReqError");
-const APIFeatures = require("../utlis/ApiFeature");
+const APIFeatures = require("../utlis/apiFeature");
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET,
