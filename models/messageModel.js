@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-//#region for message schema
 const messageSchema = mongoose.Schema(
   {
     sender: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
@@ -10,13 +9,11 @@ const messageSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-// #endregion
 
-//#region for population
+// for population
 messageSchema.pre(/^find/, function (next) {
   // this.populate({
   //   path: 'chat',
-
   // });
   this.populate({
     path: 'sender'
@@ -24,7 +21,6 @@ messageSchema.pre(/^find/, function (next) {
   });
   next();
 });
-// #endregion
 
 const Message = mongoose.model("Message", messageSchema);
 module.exports = Message;

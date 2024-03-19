@@ -4,7 +4,6 @@ const asyncHandler = require("express-async-handler");
 const AppError = require("../utils/appError");
 const { promisify } = require("util");
 
-
 const protect = asyncHandler(async (req, res, next) => {
   let token
   if (
@@ -25,4 +24,5 @@ const protect = asyncHandler(async (req, res, next) => {
   req.user = stillUser
   next();
 });
+
 module.exports = { protect };

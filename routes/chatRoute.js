@@ -6,6 +6,4 @@ router.route("/").post(protect, accessChat).get(protect, getChats)
 router.route("/group").post(protect, createGroupChat)
 router.route("/groupadd/:id").patch(protect, addToGroup)
 
-
-
 module.exports = router;

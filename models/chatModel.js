@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-//#region for chat schema
+
 const chatSchema = mongoose.Schema(
   {
     chatName: { type: String, trim: true },
@@ -13,16 +13,14 @@ const chatSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-// #endregion
 
-//#region for Population
+//for Population
 chatSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'users',
   });
   next();
 });
-// #endregion
 
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports = Chat;
