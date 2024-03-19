@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const { promisify } = require("util");
-const BaseError = require("../errors/BaseError");
 const NotAuthError = require("../errors/NotAuthError");
 
 const protect = asyncHandler(async (req, res, next) => {
