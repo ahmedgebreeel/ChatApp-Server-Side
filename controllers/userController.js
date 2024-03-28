@@ -17,7 +17,8 @@ const signToken = id => {
 };
 
 const singup = asyncHandler(async (req, res, next) => {
-  console.log("password: " +  req.body.password)
+  console.log("password: " +  req.body.password);
+  console.log("email: " +  req.body.email);
   const user = await User.findOne({ email: req.body.email })
   if (user) {
     return next(new BadReqError("this user already exists"))
@@ -37,6 +38,8 @@ const singup = asyncHandler(async (req, res, next) => {
 })
 
 const login = asyncHandler(async (req, res, next) => {
+  console.log("password: " +  req.body.password);
+  console.log("email: " +  req.body.email);
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.correctPass(password, user.password))) {
