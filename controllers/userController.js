@@ -17,6 +17,7 @@ const signToken = id => {
 };
 
 const singup = asyncHandler(async (req, res, next) => {
+  console.log("password: " +  req.body.password)
   const user = await User.findOne({ email: req.body.email })
   if (user) {
     return next(new BadReqError("this user already exists"))
